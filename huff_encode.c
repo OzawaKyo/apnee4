@@ -55,7 +55,7 @@ Arbre ConstruireArbre(fap file) {
         int p1, p2;
         file = extraire(file, &a1, &p1);    
         file = extraire(file, &a2, &p2);
-        Arbre a = NouveauNoeud(a1, p1+p2, a2);
+        Arbre a = NouveauNoeud(a1,'_', a2);
         file = inserer(file, a, p1 + p2);
 
     }
@@ -145,16 +145,10 @@ void Encoder(FILE *fic_in, FILE *fic_out, Arbre ArbreHuffman) {
 //     return 0;
 // }
 
-#include "arbrebin.h"
-#include "bfile.h"
-#include "fap.h"
-#include "huffman_code.h"
-#include <stdio.h>
-
 int main() {
     // Créer un fichier d'entrée avec un contenu simple
     FILE *test_file = fopen("test.txt", "w");
-    fprintf(test_file, "abracadabra"); // Contenu du fichier
+    fprintf(test_file, "aaaaabbbbcddeeeeee"); // Contenu du fichier
     fclose(test_file);
 
     // Ouvrir le fichier pour lecture
