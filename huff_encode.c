@@ -186,7 +186,16 @@ int main() {
 
     // Construire la table de codage
     ConstruireCode(ArbreHuffman);
-
+printf("\nTable de codage :\n");
+    for (int i = 0; i < 256; i++) {
+        if (HuffmanCode[i].lg > 0) {
+            printf("Caractere %c (code %d) : Longueur %d, Code ", i, i, HuffmanCode[i].lg);
+            for (int j = 0; j < HuffmanCode[i].lg; j++) {
+                printf("%d", HuffmanCode[i].code[j]);
+            }
+            printf("\n");
+        }
+    }
     // Encodage
     fichier = fopen("test.txt", "r");
     FILE *fichier_encode = fopen("encoded.bin", "wb");
