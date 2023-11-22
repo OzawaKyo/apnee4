@@ -20,7 +20,7 @@ void ConstruireTableOcc(FILE *fichier, TableOcc_t *TableOcc) {
     }
     c = fgetc(fichier);
     while (c != EOF) {
-        if (c != ' ') {
+        if (c != 10) {
             TableOcc->tab[c]++;
         }
         c = fgetc(fichier);
