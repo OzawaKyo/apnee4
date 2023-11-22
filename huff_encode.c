@@ -46,7 +46,7 @@ fap InitHuffman(TableOcc_t *TableOcc) {
         }
     }   
     return file;
-}
+} 
 
 Arbre ConstruireArbre(fap file) {
     while (!est_fap_vide(file) && file->prochain != NULL)
@@ -65,10 +65,23 @@ Arbre ConstruireArbre(fap file) {
     return a;
 }
 
+void ConstruireCodeRec(Arbre huff, int code[], int lg, int indice) {
+    if (EstVide(huff->fg) && EstVide(huff->fd)) {
+        HuffmanCode[huff->etiq].lg = lg;
+        for (int i = 0; i < lg; i++) {
+            HuffmanCode[huff->etiq].code[i] = code[i];
+        }
+    } else {
+        code[lg] = 0;
+        ConstruireCodeRec(huff->fg, code, lg + 1, indice);
+        code[lg] = 1;
+        ConstruireCodeRec(huff->fd, code, lg + 1, indice);
+    }
+}
 
 void ConstruireCode(Arbre huff) {
-    /* A COMPLETER */
-    printf("Programme non realise (ConstruireCode)\n");
+    int code[256];
+    ConstruireCodeRec(huff, code, 0, 0);
 }
 
 void Encoder(FILE *fic_in, FILE *fic_out, Arbre ArbreHuffman) {
@@ -76,29 +89,29 @@ void Encoder(FILE *fic_in, FILE *fic_out, Arbre ArbreHuffman) {
     printf("Programme non realise (Encoder)\n");
 }
 
-// int main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) {
 
-    // TableOcc_t TableOcc;
-    // FILE *fichier;
-    // // FILE *fichier_encode;
+    TableOcc_t TableOcc;
+    FILE *fichier;
+    // FILE *fichier_encode;
 
-    // fichier = fopen(argv[1], "r");
-    // /* Construire la table d'occurences */
-    // ConstruireTableOcc(fichier, &TableOcc);
-    // fclose(fichier);
+    fichier = fopen(argv[1], "r");
+    /* Construire la table d'occurences */
+    ConstruireTableOcc(fichier, &TableOcc);
+    fclose(fichier);
 
-    // /* Initialiser la FAP */
-    // fap file = InitHuffman(&TableOcc);
+    /* Initialiser la FAP */
+    fap file = InitHuffman(&TableOcc);
 
-    // /* Construire l'arbre d'Huffman */
-    // Arbre ArbreHuffman = ConstruireArbre(file);
+    /* Construire l'arbre d'Huffman */
+    Arbre ArbreHuffman = ConstruireArbre(file);
 
-    //     AfficherArbre(ArbreHuffman);
+        AfficherArbre(ArbreHuffman);
 
     /* Construire la table de codage */
-    // ConstruireCode(ArbreHuffman);
+    ConstruireCode(ArbreHuffman);
 
-    // /* Encodage */
+    /* Encodage */
     // fichier = fopen(argv[1], "r");
     // fichier_encode = fopen(argv[2], "w");
 
@@ -106,45 +119,6 @@ void Encoder(FILE *fic_in, FILE *fic_out, Arbre ArbreHuffman) {
 
     // fclose(fichier_encode);
     // fclose(fichier);
-    // return 0;
-// }
-
-
-int main() {
-    // Exemple de fichier (à remplacer par le chemin de votre fichier)
-    FILE *fichier = fopen("gargantua.txt", "r");
-    if (fichier == NULL) {
-        perror("Erreur lors de l'ouverture du fichier");
-        return 1;
-    }
-
-    // Initialisation de la table d'occurrences
-    TableOcc_t TableOcc;
-    ConstruireTableOcc(fichier, &TableOcc);
-
-    // Affichage de la table d'occurrences
-    printf("Table d'occurrences :\n");
-    for (int i = 0; i < 256; i++) {
-        if (TableOcc.tab[i] != 0) {
-            printf("Caractere %c (code %d) : %d\n", (char)i, i, TableOcc.tab[i]);
-        }
-    }
-
-    // Initialisation de la file de priorités
-    fap file = InitHuffman(&TableOcc);
-
-    // Construction de l'arbre de Huffman
-    Arbre arbreHuffman = ConstruireArbre(file);
-
-    // Affichage de l'arbre de Huffman
-    printf("\nArbre de Huffman :\n");
-    AfficherArbre(arbreHuffman);
-
-    // Libération de la mémoire allouée pour l'arbre
-    LibererArbre(arbreHuffman);
-
-    // Fermeture du fichier
-    fclose(fichier);
-
     return 0;
 }
+
