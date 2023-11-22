@@ -85,15 +85,38 @@ void ConstruireCode(Arbre huff) {
 }
 
 void Encoder(FILE *fic_in, FILE *fic_out, Arbre ArbreHuffman) {
-    /* A COMPLETER */
-    printf("Programme non realise (Encoder)\n");
+    // Ouvrir un accès bit à bit en écriture pour le fichier de sortie
+    BFILE *bf = bstart(fic_out, "w");
+
+    // Écrire l'arbre binaire dans le fichier de sortie
+    EcrireArbre(bf->fichier ,ArbreHuffman);
+    // Revenir au début du fichier d'entrée
+    rewind(fic_in);
+
+    int c;
+    while ((c = fgetc(fic_in)) != EOF) {
+        for (int i = 0; i < HuffmanCode[c].lg; i++) {
+            // Écrire chaque bit du code dans le fichier de sortie
+            bitwrite(bf, HuffmanCode[c].code[i]);
+        }
+    }
+
+    // Écrire un caractère spécial pour indiquer la fin du fichier
+    for (int i = 0; i < HuffmanCode[4].lg; i++) {
+        bitwrite(bf, HuffmanCode[4].code[i]);
+    }
+
+    // Fermer l'accès bit à bit
+    bstop(bf);
 }
+
+
 
 int main(int argc, char *argv[]) {
 
     TableOcc_t TableOcc;
     FILE *fichier;
-    // FILE *fichier_encode;
+    FILE *fichier_encode;
 
     fichier = fopen(argv[1], "r");
     /* Construire la table d'occurences */
@@ -112,13 +135,13 @@ int main(int argc, char *argv[]) {
     ConstruireCode(ArbreHuffman);
 
     /* Encodage */
-    // fichier = fopen(argv[1], "r");
-    // fichier_encode = fopen(argv[2], "w");
+    fichier = fopen(argv[1], "r");
+    fichier_encode = fopen(argv[2], "w");
 
-    // Encoder(fichier, fichier_encode, ArbreHuffman);
+    Encoder(fichier, fichier_encode, ArbreHuffman);
 
-    // fclose(fichier_encode);
-    // fclose(fichier);
+    fclose(fichier_encode);
+    fclose(fichier);
     return 0;
 }
 
