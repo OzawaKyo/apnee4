@@ -112,36 +112,87 @@ void Encoder(FILE *fic_in, FILE *fic_out, Arbre ArbreHuffman) {
 
 
 
-int main(int argc, char *argv[]) {
+// int main(int argc, char *argv[]) {
 
+//     TableOcc_t TableOcc;
+//     FILE *fichier;
+//     FILE *fichier_encode;
+
+//     fichier = fopen(argv[1], "r");
+//     /* Construire la table d'occurences */
+//     ConstruireTableOcc(fichier, &TableOcc);
+//     fclose(fichier);
+
+//     /* Initialiser la FAP */
+//     fap file = InitHuffman(&TableOcc);
+
+//     /* Construire l'arbre d'Huffman */
+//     Arbre ArbreHuffman = ConstruireArbre(file);
+
+//         AfficherArbre(ArbreHuffman);
+
+//     /* Construire la table de codage */
+//     ConstruireCode(ArbreHuffman);
+
+//     /* Encodage */
+//     fichier = fopen(argv[1], "r");
+//     fichier_encode = fopen(argv[2], "w");
+
+//     Encoder(fichier, fichier_encode, ArbreHuffman);
+
+//     fclose(fichier_encode);
+//     fclose(fichier);
+//     return 0;
+// }
+
+#include "arbrebin.h"
+#include "bfile.h"
+#include "fap.h"
+#include "huffman_code.h"
+#include <stdio.h>
+
+int main() {
+    // Créer un fichier d'entrée avec un contenu simple
+    FILE *test_file = fopen("test.txt", "w");
+    fprintf(test_file, "abracadabra"); // Contenu du fichier
+    fclose(test_file);
+
+    // Ouvrir le fichier pour lecture
+    FILE *fichier = fopen("test.txt", "r");
+
+    // Construire la table d'occurrences
     TableOcc_t TableOcc;
-    FILE *fichier;
-    FILE *fichier_encode;
-
-    fichier = fopen(argv[1], "r");
-    /* Construire la table d'occurences */
     ConstruireTableOcc(fichier, &TableOcc);
     fclose(fichier);
 
-    /* Initialiser la FAP */
+    // Initialiser la FAP
     fap file = InitHuffman(&TableOcc);
+    printf("\nFAP (File d'Attente de Priorité) :\n");
+    while (!est_fap_vide(file)) {
+        Arbre a;
+        int p;
+        file = extraire(file, &a, &p);
+        printf("Caractere %c (code %d) : Priorite %d\n", a->etiq, a->etiq, p);
+    }
+    printf("\n");
+    file = InitHuffman(&TableOcc);
 
-    /* Construire l'arbre d'Huffman */
+    // Construire l'arbre de Huffman
     Arbre ArbreHuffman = ConstruireArbre(file);
 
-        AfficherArbre(ArbreHuffman);
+    // Afficher l'arbre de Huffman
+    printf("Arbre de Huffman :\n");
+    AfficherArbre(ArbreHuffman);
 
-    /* Construire la table de codage */
+    // Construire la table de codage
     ConstruireCode(ArbreHuffman);
 
-    /* Encodage */
-    fichier = fopen(argv[1], "r");
-    fichier_encode = fopen(argv[2], "w");
-
+    // Encodage
+    fichier = fopen("test.txt", "r");
+    FILE *fichier_encode = fopen("encoded.bin", "wb");
     Encoder(fichier, fichier_encode, ArbreHuffman);
-
-    fclose(fichier_encode);
     fclose(fichier);
+    fclose(fichier_encode);
+
     return 0;
 }
-
