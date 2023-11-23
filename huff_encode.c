@@ -55,7 +55,7 @@ Arbre ConstruireArbre(fap file) {
         int p1, p2;
         file = extraire(file, &a1, &p1);    
         file = extraire(file, &a2, &p2);
-        Arbre a = NouveauNoeud(a1,'_', a2);
+        Arbre a = NouveauNoeud(a1,(Element)0, a2);
         file = inserer(file, a, p1 + p2);
 
     }
