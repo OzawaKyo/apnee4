@@ -85,32 +85,18 @@ void ConstruireCode(Arbre huff) {
 }
 
 void Encoder(FILE *fic_in, FILE *fic_out, Arbre ArbreHuffman) {
-    // Write the Huffman tree to the output file
     EcrireArbre(fic_out, ArbreHuffman);
-
-    // Initialize the bitfile for writing
-    BFILE *bfile = bstart(fic_out, "w");
 
     int c;
     while ((c = fgetc(fic_in)) != EOF) {
-        if (c != 10) { // Ignore newline characters
-            // Get the Huffman code for the current character
             int *code = HuffmanCode[c].code;
             int lg = HuffmanCode[c].lg;
 
-            // Write each bit of the Huffman code to the output file
             for (int i = 0; i < lg; i++) {
-                bitwrite(bfile, code[i]);
+                fprintf(fic_out, "%d", code[i]);
             }
-        }
     }
-
-    // Close the bitfile and the input file
-    bstop(bfile);
-    fclose(fic_in);
 }
-
-
 
 
 
@@ -144,6 +130,7 @@ int main(int argc, char *argv[]) {
 
     fclose(fichier_encode);
     fclose(fichier);
+
     return 0;
 }
 
