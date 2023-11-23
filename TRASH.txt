@@ -1,0 +1,54 @@
+// int main() {
+//     // Créer un fichier d'entrée avec un contenu simple
+//     FILE *test_file = fopen("test.txt", "w");
+//     fprintf(test_file, "abracadabra"); // Contenu du fichier
+//     fclose(test_file);
+
+//     // Ouvrir le fichier pour lecture
+//     FILE *fichier = fopen("test.txt", "r");
+
+//     // Construire la table d'occurrences
+//     TableOcc_t TableOcc;
+//     ConstruireTableOcc(fichier, &TableOcc);
+//     fclose(fichier);
+
+//     // Initialiser la FAP
+//     fap file = InitHuffman(&TableOcc);
+//     printf("\nFAP (File d'Attente de Priorité) :\n");
+//     while (!est_fap_vide(file)) {
+//         Arbre a;
+//         int p;
+//         file = extraire(file, &a, &p);
+//         printf("Caractere %c (code %d) : Priorite %d\n", a->etiq, a->etiq, p);
+//     }
+//     printf("\n");
+//     file = InitHuffman(&TableOcc);
+
+//     // Construire l'arbre de Huffman
+//     Arbre ArbreHuffman = ConstruireArbre(file);
+
+//     // Afficher l'arbre de Huffman
+//     printf("Arbre de Huffman :\n");
+//     AfficherArbre(ArbreHuffman);
+
+//     // Construire la table de codage
+//     ConstruireCode(ArbreHuffman);
+// printf("\nTable de codage :\n");
+//     for (int i = 0; i < 256; i++) {
+//         if (HuffmanCode[i].lg > 0) {
+//             printf("Caractere %c (code %d) : Longueur %d, Code ", i, i, HuffmanCode[i].lg);
+//             for (int j = 0; j < HuffmanCode[i].lg; j++) {
+//                 printf("%d", HuffmanCode[i].code[j]);
+//             }
+//             printf("\n");
+//         }
+//     }
+//     // Encodage
+//     fichier = fopen("test.txt", "r");
+//     FILE *fichier_encode = fopen("encoded.bin", "wb");
+//     Encoder(fichier, fichier_encode, ArbreHuffman);
+//     fclose(fichier);
+//     fclose(fichier_encode);
+
+//     return 0;
+// }

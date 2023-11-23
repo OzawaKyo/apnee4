@@ -85,117 +85,65 @@ void ConstruireCode(Arbre huff) {
 }
 
 void Encoder(FILE *fic_in, FILE *fic_out, Arbre ArbreHuffman) {
-    // Ouvrir un accès bit à bit en écriture pour le fichier de sortie
-    BFILE *bf = bstart(fic_out, "w");
+    // Write the Huffman tree to the output file
+    EcrireArbre(fic_out, ArbreHuffman);
 
-    // Écrire l'arbre binaire dans le fichier de sortie
-    EcrireArbre(bf->fichier ,ArbreHuffman);
-    // Revenir au début du fichier d'entrée
-    rewind(fic_in);
+    // Initialize the bitfile for writing
+    BFILE *bfile = bstart(fic_out, "w");
 
     int c;
     while ((c = fgetc(fic_in)) != EOF) {
-        for (int i = 0; i < HuffmanCode[c].lg; i++) {
-            // Écrire chaque bit du code dans le fichier de sortie
-            bitwrite(bf, HuffmanCode[c].code[i]);
+        if (c != 10) { // Ignore newline characters
+            // Get the Huffman code for the current character
+            int *code = HuffmanCode[c].code;
+            int lg = HuffmanCode[c].lg;
+
+            // Write each bit of the Huffman code to the output file
+            for (int i = 0; i < lg; i++) {
+                bitwrite(bfile, code[i]);
+            }
         }
     }
 
-    // Écrire un caractère spécial pour indiquer la fin du fichier
-    for (int i = 0; i < HuffmanCode[4].lg; i++) {
-        bitwrite(bf, HuffmanCode[4].code[i]);
-    }
-
-    // Fermer l'accès bit à bit
-    bstop(bf);
+    // Close the bitfile and the input file
+    bstop(bfile);
+    fclose(fic_in);
 }
 
 
 
-// int main(int argc, char *argv[]) {
 
-//     TableOcc_t TableOcc;
-//     FILE *fichier;
-//     FILE *fichier_encode;
 
-//     fichier = fopen(argv[1], "r");
-//     /* Construire la table d'occurences */
-//     ConstruireTableOcc(fichier, &TableOcc);
-//     fclose(fichier);
+int main(int argc, char *argv[]) {
 
-//     /* Initialiser la FAP */
-//     fap file = InitHuffman(&TableOcc);
-
-//     /* Construire l'arbre d'Huffman */
-//     Arbre ArbreHuffman = ConstruireArbre(file);
-
-//         AfficherArbre(ArbreHuffman);
-
-//     /* Construire la table de codage */
-//     ConstruireCode(ArbreHuffman);
-
-//     /* Encodage */
-//     fichier = fopen(argv[1], "r");
-//     fichier_encode = fopen(argv[2], "w");
-
-//     Encoder(fichier, fichier_encode, ArbreHuffman);
-
-//     fclose(fichier_encode);
-//     fclose(fichier);
-//     return 0;
-// }
-
-int main() {
-    // Créer un fichier d'entrée avec un contenu simple
-    FILE *test_file = fopen("test.txt", "w");
-    fprintf(test_file, "aaaaabbbbcddeeeeee"); // Contenu du fichier
-    fclose(test_file);
-
-    // Ouvrir le fichier pour lecture
-    FILE *fichier = fopen("test.txt", "r");
-
-    // Construire la table d'occurrences
     TableOcc_t TableOcc;
+    FILE *fichier;
+    FILE *fichier_encode;
+
+    fichier = fopen(argv[1], "r");
+    /* Construire la table d'occurences */
     ConstruireTableOcc(fichier, &TableOcc);
     fclose(fichier);
 
-    // Initialiser la FAP
+    /* Initialiser la FAP */
     fap file = InitHuffman(&TableOcc);
-    printf("\nFAP (File d'Attente de Priorité) :\n");
-    while (!est_fap_vide(file)) {
-        Arbre a;
-        int p;
-        file = extraire(file, &a, &p);
-        printf("Caractere %c (code %d) : Priorite %d\n", a->etiq, a->etiq, p);
-    }
-    printf("\n");
-    file = InitHuffman(&TableOcc);
 
-    // Construire l'arbre de Huffman
+    /* Construire l'arbre d'Huffman */
     Arbre ArbreHuffman = ConstruireArbre(file);
 
-    // Afficher l'arbre de Huffman
-    printf("Arbre de Huffman :\n");
-    AfficherArbre(ArbreHuffman);
+        AfficherArbre(ArbreHuffman);
 
-    // Construire la table de codage
+    /* Construire la table de codage */
     ConstruireCode(ArbreHuffman);
-printf("\nTable de codage :\n");
-    for (int i = 0; i < 256; i++) {
-        if (HuffmanCode[i].lg > 0) {
-            printf("Caractere %c (code %d) : Longueur %d, Code ", i, i, HuffmanCode[i].lg);
-            for (int j = 0; j < HuffmanCode[i].lg; j++) {
-                printf("%d", HuffmanCode[i].code[j]);
-            }
-            printf("\n");
-        }
-    }
-    // Encodage
-    fichier = fopen("test.txt", "r");
-    FILE *fichier_encode = fopen("encoded.bin", "wb");
-    Encoder(fichier, fichier_encode, ArbreHuffman);
-    fclose(fichier);
-    fclose(fichier_encode);
 
+    /* Encodage */
+    fichier = fopen(argv[1], "r");
+    fichier_encode = fopen(argv[2], "w");
+
+    Encoder(fichier, fichier_encode, ArbreHuffman);
+
+    fclose(fichier_encode);
+    fclose(fichier);
     return 0;
 }
+
