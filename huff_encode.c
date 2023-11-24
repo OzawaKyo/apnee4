@@ -20,12 +20,10 @@ void ConstruireTableOcc(FILE *fichier, TableOcc_t *TableOcc) {
     }
     c = fgetc(fichier);
     while (c != EOF) {
-        // if (c != 10) {
             TableOcc->tab[c]++;
-        // }
         c = fgetc(fichier);
     };
-
+    // enlever tout les caracteres special au desus de 127
     for (int i = 127; i < 256; i++) {
         TableOcc->tab[i] = 0;
     }
