@@ -20,9 +20,9 @@ void ConstruireTableOcc(FILE *fichier, TableOcc_t *TableOcc) {
     }
     c = fgetc(fichier);
     while (c != EOF) {
-        if (c != 10) {
+        // if (c != 10) {
             TableOcc->tab[c]++;
-        }
+        // }
         c = fgetc(fichier);
     };
 
@@ -55,7 +55,7 @@ Arbre ConstruireArbre(fap file) {
         int p1, p2;
         file = extraire(file, &a1, &p1);    
         file = extraire(file, &a2, &p2);
-        Arbre a = NouveauNoeud(a1,(Element)0, a2);
+        Arbre a = NouveauNoeud(a1,'-', a2);
         file = inserer(file, a, p1 + p2);
 
     }
@@ -89,6 +89,8 @@ void Encoder(FILE *fic_in, FILE *fic_out, Arbre ArbreHuffman) {
 
     int c;
     while ((c = fgetc(fic_in)) != EOF) {
+            if (c == ' ') {
+            fprintf(fic_out, " ");}
             int *code = HuffmanCode[c].code;
             int lg = HuffmanCode[c].lg;
 
@@ -97,8 +99,6 @@ void Encoder(FILE *fic_in, FILE *fic_out, Arbre ArbreHuffman) {
             }
     }
 }
-
-
 
 int main(int argc, char *argv[]) {
 
@@ -121,7 +121,16 @@ int main(int argc, char *argv[]) {
 
     /* Construire la table de codage */
     ConstruireCode(ArbreHuffman);
-
+    printf("\nTable de codage :\n");
+    for (int i = 0; i < 256; i++) {
+        if (HuffmanCode[i].lg > 0) {
+            printf("Caractere %c (code %d) : Longueur %d, Code ", i, i, HuffmanCode[i].lg);
+            for (int j = 0; j < HuffmanCode[i].lg; j++) {
+                printf("%d", HuffmanCode[i].code[j]);
+            }
+            printf("\n");
+        }
+    }
     /* Encodage */
     fichier = fopen(argv[1], "r");
     fichier_encode = fopen(argv[2], "w");
